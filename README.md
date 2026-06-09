@@ -29,11 +29,14 @@ DeCAF-Pearl distills the [Pearl](https://arxiv.org/abs/2510.24670) cofolding fou
 ## Citation
 
 ```bibtex
-@article{decaf2025,
-  title={Distilling Pearl: Flow Maps for Fast All-Atom Cofolding},
-  author={Genesis Research Team},
-  journal={arXiv preprint arXiv:2606.08375},
-  year={2025}
+@misc{scarpellini2026fewstepcofoldingallatomflow,
+      title={Few-step Cofolding with All-Atom Flow Maps}, 
+      author={Gianluca Scarpellini and Ron Shprints and Peter Holderrieth and Juno Nam and Pranav Murugan and Rafael Gómez-Bombarelli and Tommi Jaakola and Maruan Al-Shedivat and Nicholas Matthew Boffi and Avishek Joey Bose},
+      year={2026},
+      eprint={2606.08375},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2606.08375}, 
 }
 ```
 
