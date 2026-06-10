@@ -3,7 +3,7 @@
 **Distilling Pearl: Flow Maps for Fast All-Atom Cofolding**
 
 [[arXiv]](https://arxiv.org/abs/2606.08375)
-[[Blog Post]](https://www.genesis.ml/news/distilling-pearl-flow-maps-for-fast-all-atom-cofolding)
+[[Blog Post]](https://www.genesis.ml/news/genesis-model-distillation)
 
 > **Work in progress** — code release coming soon.
 
