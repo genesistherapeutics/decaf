@@ -36,6 +36,19 @@ DeCAF-Pearl distills the [Pearl](https://arxiv.org/abs/2510.24670) cofolding fou
 - **High-throughput virtual screening.** Cofold 5x more molecules against a target at the same compute budget.
 - **Scalable synthetic data generation.** Generate 5x more high-quality protein-ligand complexes to train better downstream models, without losing the structural signal they depend on.
 
+## Model checkpoint
+
+The DeCAF-Pearl checkpoint is available on [Google Drive](https://drive.google.com/drive/folders/1QFunXYqvor_LWF61wVnb4ZuD_3MGXUEm).
+
+Download it, then run the bundled end-to-end example:
+
+```bash
+# place the downloaded checkpoint at /tmp/decaf_ckpt.ckpt (or pass a path)
+bash scripts/run_decaf_example.sh /path/to/decaf_ckpt.ckpt
+```
+
+This runs few-step DeCAF inference on `examples/prot_custom_msa.yaml` and writes a predicted structure CIF. See [docs/decaf_prediction.md](docs/decaf_prediction.md) for full prediction and evaluation instructions.
+
 ## Citation
 
 ```bibtex
