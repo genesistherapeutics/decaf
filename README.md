@@ -5,6 +5,10 @@
 [[arXiv]](https://arxiv.org/abs/2606.08375)
 [[Blog Post]](https://www.genesis.ml/news/genesis-model-distillation)
 
+<p align="center">
+  <img src="docs/decaf_structure.png" alt="DeCAF: Denoiser Flow Map Distillation. A diffusion teacher is distilled into a few-step denoiser flow map that jumps directly between points on the generation trajectory." width="80%">
+</p>
+
 > **Work in progress** — code release coming soon.
 
 ## Overview
@@ -12,6 +16,12 @@
 DeCAF is the first flow map model for all-atom cofolding. Instead of taking many steps along the denoising trajectory, a flow map learns to jump directly from one point on the trajectory to another, potentially traversing the entire generation process in just a handful of steps.
 
 DeCAF-Pearl distills the [Pearl](https://arxiv.org/abs/2510.24670) cofolding foundation model into a fast few-step generator, achieving a **5x inference speedup** with near-parity in structure prediction quality. Using over 5x fewer compute steps, DeCAF-Pearl exceeds AlphaFold 3, Chai-1, Boltz-1x, and Boltz-2 on the Runs N' Poses benchmark success rate by 3 to 15 percentage points.
+
+<p align="center">
+  <img src="docs/decaf_runs_n_poses_benchmark.png" alt="Runs N' Poses (post-2023) unconditional cofolding success rate, best@5. DeCAF-Pearl reaches near-parity with its full-budget Pearl teacher and outperforms AF3, Boltz-1x, Chai-1, and Boltz-2." width="90%">
+</p>
+
+<p align="center"><em>Runs N' Poses (post-2023) success rate, best@5: DeCAF-Pearl nearly matches its full-budget teacher while outperforming AF3, Boltz-1x, Chai-1, and Boltz-2.</em></p>
 
 ### Key design decisions
 
