@@ -4,6 +4,7 @@
 
 [[arXiv]](https://arxiv.org/abs/2606.08375)
 [[Blog Post]](https://www.genesis.ml/news/genesis-model-distillation)
+[[Hugging Face]](https://huggingface.co/gianscarpe/decaf)
 
 <p align="center">
   <img src="docs/decaf_structure.png" alt="DeCAF: Denoiser Flow Map Distillation. A diffusion teacher is distilled into a few-step denoiser flow map that jumps directly between points on the generation trajectory." width="80%">
