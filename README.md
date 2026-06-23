@@ -41,17 +41,22 @@ DeCAF-Pearl distills the [Pearl](https://arxiv.org/abs/2510.24670) cofolding fou
 
 The DeCAF-Pearl checkpoint is available on [Hugging Face: gianscarpe/decaf](https://huggingface.co/gianscarpe/decaf).
 
-Download it and run the bundled end-to-end example:
+DeCAF extends [Boltz](https://github.com/jwohlwend/boltz), so it runs in a standard Boltz environment — you can reuse an existing `boltz` conda env (the dependencies are the same). The example script prepends this repo's `src/` to `PYTHONPATH`, so the bundled DeCAF code is used even if another `boltz` package is already installed in that env.
+
+Download the checkpoint and run the bundled end-to-end example:
 
 ```bash
+# (optional) activate your existing Boltz environment
+conda activate boltz
+
 # download the checkpoint (requires `pip install huggingface_hub`)
 hf download gianscarpe/decaf decaf_ckpt.ckpt --local-dir .
 
-# run few-step DeCAF cofolding inference (protein + SAH ligand, MSA via ColabFold)
+# run few-step DeCAF cofolding inference (protein dimer + SAH ligand, MSA via ColabFold)
 bash scripts/run_decaf_example.sh ./decaf_ckpt.ckpt
 ```
 
-This fetches an MSA from the public ColabFold server, runs few-step DecafSampler inference on `examples/protlig_msa_server.yaml` (single protein chain + SAH ligand), and writes 5 predicted structure CIFs. See [docs/decaf_prediction.md](docs/decaf_prediction.md) for full prediction and evaluation instructions.
+This fetches an MSA from the public ColabFold server, runs few-step DecafSampler inference on `examples/protlig_msa_server.yaml` (a homodimer + SAH ligand), and writes 5 predicted structure CIFs. On this example DeCAF reaches ~0.3 Å ligand RMSD against the crystal structure in just 10 steps. See [docs/decaf_prediction.md](docs/decaf_prediction.md) for full prediction and evaluation instructions.
 
 ## Citation
 
