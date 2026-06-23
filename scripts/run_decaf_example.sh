@@ -30,6 +30,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$REPO_ROOT"
 
+# Always run THIS repo's `boltz` code, even if another `boltz`/`boltz-flowmap`
+# package is installed in the environment. Without this, `python -m boltz.main`
+# may resolve to a different install that does not understand the `decaf_head`
+# checkpoint naming, silently drop the trained DeCAF head, and fall back to the
+# teacher diffusion model — producing garbage few-step predictions.
+export PYTHONPATH="$REPO_ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
+
 CHECKPOINT="${1:-${CHECKPOINT:-/tmp/decaf_ckpt.ckpt}}"
 OUT_DIR="${2:-./decaf_example_out}"
 INPUT="examples/protlig_msa_server.yaml"
