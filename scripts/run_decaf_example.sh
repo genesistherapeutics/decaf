@@ -5,9 +5,10 @@
 #
 # Prerequisites:
 #   - The `boltz` package installed (editable) in your environment.
-#   - The DeCAF-Pearl checkpoint downloaded locally. Get it from:
-#       https://drive.google.com/drive/folders/1QFunXYqvor_LWF61wVnb4ZuD_3MGXUEm
-#     and point CHECKPOINT at it (default: /tmp/decaf_ckpt.ckpt).
+#   - The DeCAF-Pearl checkpoint downloaded locally. Get it from Hugging Face:
+#       hf download gianscarpe/decaf decaf_ckpt.ckpt --local-dir .
+#     (https://huggingface.co/gianscarpe/decaf) and point CHECKPOINT at it
+#     (default: /tmp/decaf_ckpt.ckpt).
 #
 # Usage:
 #   bash scripts/run_decaf_example.sh [checkpoint_path] [out_dir]
@@ -34,8 +35,9 @@ INPUT="examples/prot_custom_msa.yaml"
 
 if [ ! -f "$CHECKPOINT" ]; then
     echo "ERROR: checkpoint not found at '$CHECKPOINT'."
-    echo "Download it from https://drive.google.com/drive/folders/1QFunXYqvor_LWF61wVnb4ZuD_3MGXUEm"
-    echo "and pass its path: bash scripts/run_decaf_example.sh /path/to/decaf_ckpt.ckpt"
+    echo "Download it from Hugging Face: hf download gianscarpe/decaf decaf_ckpt.ckpt --local-dir ."
+    echo "(https://huggingface.co/gianscarpe/decaf) then pass its path:"
+    echo "  bash scripts/run_decaf_example.sh /path/to/decaf_ckpt.ckpt"
     exit 1
 fi
 

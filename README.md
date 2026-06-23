@@ -38,13 +38,16 @@ DeCAF-Pearl distills the [Pearl](https://arxiv.org/abs/2510.24670) cofolding fou
 
 ## Model checkpoint
 
-The DeCAF-Pearl checkpoint is available on [Google Drive](https://drive.google.com/drive/folders/1QFunXYqvor_LWF61wVnb4ZuD_3MGXUEm).
+The DeCAF-Pearl checkpoint is available on [Hugging Face: gianscarpe/decaf](https://huggingface.co/gianscarpe/decaf).
 
-Download it, then run the bundled end-to-end example:
+Download it and run the bundled end-to-end example:
 
 ```bash
-# place the downloaded checkpoint at /tmp/decaf_ckpt.ckpt (or pass a path)
-bash scripts/run_decaf_example.sh /path/to/decaf_ckpt.ckpt
+# download the checkpoint (requires `pip install huggingface_hub`)
+hf download gianscarpe/decaf decaf_ckpt.ckpt --local-dir .
+
+# run few-step DeCAF inference on the bundled example
+bash scripts/run_decaf_example.sh ./decaf_ckpt.ckpt
 ```
 
 This runs few-step DeCAF inference on `examples/prot_custom_msa.yaml` and writes a predicted structure CIF. See [docs/decaf_prediction.md](docs/decaf_prediction.md) for full prediction and evaluation instructions.
