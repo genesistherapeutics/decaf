@@ -1,7 +1,7 @@
 #!/bin/bash
-# Run DeCAF end-to-end on the bundled example input — a minimal smoke test
-# that exercises the full prediction pipeline (load checkpoint -> featurize ->
-# few-step DecafSampler inference -> write CIF).
+# Run DeCAF end-to-end on the bundled protein-ligand cofolding example.
+# Downloads an MSA via the public ColabFold server, then runs few-step
+# DecafSampler inference and writes a predicted structure CIF.
 #
 # Prerequisites:
 #   - The `boltz` package installed (editable) in your environment.
@@ -9,6 +9,7 @@
 #       hf download gianscarpe/decaf decaf_ckpt.ckpt --local-dir .
 #     (https://huggingface.co/gianscarpe/decaf) and point CHECKPOINT at it
 #     (default: /tmp/decaf_ckpt.ckpt).
+#   - Internet access for the MSA server (api.colabfold.com).
 #
 # Usage:
 #   bash scripts/run_decaf_example.sh [checkpoint_path] [out_dir]
@@ -21,17 +22,17 @@
 # On success you should see:
 #   "Detected Decaf checkpoint — using DecafSampler for inference."
 #   "Number of failed examples: 0"
-# and a CIF at <out_dir>/boltz_results_prot_custom_msa/predictions/.../*_model_0.cif
+# and a CIF at <out_dir>/boltz_results_protlig_msa_server/predictions/.../*_model_0.cif
 set -euo pipefail
 
-# Resolve repo root so the example's relative MSA path (./examples/msa/...) works.
+# Resolve repo root so the example's relative paths work.
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$REPO_ROOT"
 
 CHECKPOINT="${1:-${CHECKPOINT:-/tmp/decaf_ckpt.ckpt}}"
 OUT_DIR="${2:-./decaf_example_out}"
-INPUT="examples/prot_custom_msa.yaml"
+INPUT="examples/protlig_msa_server.yaml"
 
 if [ ! -f "$CHECKPOINT" ]; then
     echo "ERROR: checkpoint not found at '$CHECKPOINT'."
@@ -41,18 +42,20 @@ if [ ! -f "$CHECKPOINT" ]; then
     exit 1
 fi
 
-echo "Running DeCAF example prediction"
+echo "Running DeCAF cofolding example (protein + SAH ligand)"
 echo "  input:      $INPUT"
 echo "  checkpoint: $CHECKPOINT"
 echo "  out_dir:    $OUT_DIR"
+echo "  MSA:        api.colabfold.com (requires internet)"
 
 python -m boltz.main predict \
     "$INPUT" \
     --checkpoint "$CHECKPOINT" \
     --model boltz1 \
     --sampling_steps 10 \
-    --diffusion_samples 1 \
-    --recycling_steps 1 \
+    --diffusion_samples 5 \
+    --recycling_steps 3 \
+    --use_msa_server \
     --accelerator gpu \
     --out_dir "$OUT_DIR" \
     --no_kernels

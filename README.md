@@ -47,11 +47,11 @@ Download it and run the bundled end-to-end example:
 # download the checkpoint (requires `pip install huggingface_hub`)
 hf download gianscarpe/decaf decaf_ckpt.ckpt --local-dir .
 
-# run few-step DeCAF inference on the bundled example
+# run few-step DeCAF cofolding inference (protein + SAH ligand, MSA via ColabFold)
 bash scripts/run_decaf_example.sh ./decaf_ckpt.ckpt
 ```
 
-This runs few-step DeCAF inference on `examples/prot_custom_msa.yaml` and writes a predicted structure CIF. See [docs/decaf_prediction.md](docs/decaf_prediction.md) for full prediction and evaluation instructions.
+This fetches an MSA from the public ColabFold server, runs few-step DecafSampler inference on `examples/protlig_msa_server.yaml` (single protein chain + SAH ligand), and writes 5 predicted structure CIFs. See [docs/decaf_prediction.md](docs/decaf_prediction.md) for full prediction and evaluation instructions.
 
 ## Citation
 
