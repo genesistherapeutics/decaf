@@ -293,6 +293,40 @@ class Boltz1(LightningModule):
                 if name.split(".")[0] != "confidence_module":
                     param.requires_grad = False
 
+        # Distillation: train the DeCAF student head against a FROZEN teacher.
+        # When a decaf_head is present we freeze every non-student parameter so
+        # the pretrained Pearl teacher (trunk + structure_module score model) is
+        # never updated. The teacher's distillation targets are already produced
+        # under torch.no_grad() in AtomDecaf, but the teacher's own diffusion loss
+        # (diffusion_loss_weight > 0) would otherwise keep training it, making the
+        # distillation target drift. Freezing excludes the teacher from the
+        # optimizer (configure_optimizers filters on requires_grad) and is
+        # DDP-safe; eval mode is enforced in train().
+        self._teacher_frozen = False
+        if self.decaf_head is not None:
+            self._teacher_frozen = True
+            for name, param in self.named_parameters():
+                if not name.startswith("decaf_head."):
+                    param.requires_grad = False
+            logger.info(
+                "DeCAF distillation: froze teacher (all params except decaf_head.*)"
+            )
+
+    def train(self, mode: bool = True):
+        """Keep the frozen teacher modules in eval mode during DeCAF distillation.
+
+        Lightning calls ``.train()`` on the whole module at fit time, which would
+        otherwise re-enable dropout in the frozen teacher/trunk and make the
+        distillation target non-deterministic. We force every non-student module
+        back to eval whenever the teacher is frozen.
+        """
+        super().train(mode)
+        if mode and getattr(self, "_teacher_frozen", False):
+            for name, module in self.named_children():
+                if name != "decaf_head":
+                    module.eval()
+        return self
+
     def setup(self, stage: str) -> None:
         """Set the model for training, validation and inference."""
         if stage == "predict" and not (
