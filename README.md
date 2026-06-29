@@ -4,7 +4,7 @@
 
 [[arXiv]](https://arxiv.org/abs/2606.08375)
 [[Blog Post]](https://www.genesis.ml/news/genesis-model-distillation)
-[[Hugging Face]](https://huggingface.co/gianscarpe/decaf)
+[[Hugging Face]](https://huggingface.co/genesisml/decaf)
 
 <p align="center">
   <img src="docs/decaf_structure.png" alt="DeCAF: Denoiser Flow Map Distillation. A diffusion teacher is distilled into a few-step denoiser flow map that jumps directly between points on the generation trajectory." width="80%">
@@ -37,7 +37,7 @@ DeCAF-Pearl distills the [Pearl](https://arxiv.org/abs/2510.24670) cofolding fou
 
 ## Model checkpoint
 
-The DeCAF-Pearl checkpoint is available on [Hugging Face: gianscarpe/decaf](https://huggingface.co/gianscarpe/decaf).
+The DeCAF-Pearl checkpoint is available on [Hugging Face: genesisml/decaf](https://huggingface.co/genesisml/decaf).
 
 DeCAF extends [Boltz](https://github.com/jwohlwend/boltz), so it runs in a standard Boltz environment — you can reuse an existing `boltz` conda env (the dependencies are the same). The example script prepends this repo's `src/` to `PYTHONPATH`, so the bundled DeCAF code is used even if another `boltz` package is already installed in that env.
 
@@ -48,7 +48,7 @@ Download the checkpoint and run the bundled end-to-end example:
 conda activate boltz
 
 # download the checkpoint (requires `pip install huggingface_hub`)
-hf download gianscarpe/decaf decaf_ckpt.ckpt --local-dir .
+hf download genesisml/decaf decaf_ckpt.ckpt --local-dir .
 
 # run few-step DeCAF cofolding inference (protein dimer + SAH ligand, MSA via ColabFold)
 bash scripts/run_decaf_example.sh ./decaf_ckpt.ckpt
