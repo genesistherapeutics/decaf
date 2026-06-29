@@ -6,8 +6,8 @@
 # Prerequisites:
 #   - The `boltz` package installed (editable) in your environment.
 #   - The DeCAF-Pearl checkpoint downloaded locally. Get it from Hugging Face:
-#       hf download gianscarpe/decaf decaf_ckpt.ckpt --local-dir .
-#     (https://huggingface.co/gianscarpe/decaf) and point CHECKPOINT at it
+#       hf download genesisml/decaf decaf_ckpt.ckpt --local-dir .
+#     (https://huggingface.co/genesisml/decaf) and point CHECKPOINT at it
 #     (default: /tmp/decaf_ckpt.ckpt).
 #   - Internet access for the MSA server (api.colabfold.com).
 #
@@ -43,8 +43,8 @@ INPUT="examples/protlig_msa_server.yaml"
 
 if [ ! -f "$CHECKPOINT" ]; then
     echo "ERROR: checkpoint not found at '$CHECKPOINT'."
-    echo "Download it from Hugging Face: hf download gianscarpe/decaf decaf_ckpt.ckpt --local-dir ."
-    echo "(https://huggingface.co/gianscarpe/decaf) then pass its path:"
+    echo "Download it from Hugging Face: hf download genesisml/decaf decaf_ckpt.ckpt --local-dir ."
+    echo "(https://huggingface.co/genesisml/decaf) then pass its path:"
     echo "  bash scripts/run_decaf_example.sh /path/to/decaf_ckpt.ckpt"
     exit 1
 fi
