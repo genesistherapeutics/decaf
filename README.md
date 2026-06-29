@@ -4,6 +4,11 @@
 
 [[arXiv]](https://arxiv.org/abs/2606.08375)
 [[Blog Post]](https://www.genesis.ml/news/genesis-model-distillation)
+[[Hugging Face]](https://huggingface.co/gianscarpe/decaf)
+
+<p align="center">
+  <img src="docs/decaf_structure.png" alt="DeCAF: Denoiser Flow Map Distillation. A diffusion teacher is distilled into a few-step denoiser flow map that jumps directly between points on the generation trajectory." width="80%">
+</p>
 
 > **Work in progress** — code release coming soon.
 
@@ -12,6 +17,12 @@
 DeCAF is the first flow map model for all-atom cofolding. Instead of taking many steps along the denoising trajectory, a flow map learns to jump directly from one point on the trajectory to another, potentially traversing the entire generation process in just a handful of steps.
 
 DeCAF-Pearl distills the [Pearl](https://arxiv.org/abs/2510.24670) cofolding foundation model into a fast few-step generator, achieving a **5x inference speedup** with near-parity in structure prediction quality. Using over 5x fewer compute steps, DeCAF-Pearl exceeds AlphaFold 3, Chai-1, Boltz-1x, and Boltz-2 on the Runs N' Poses benchmark success rate by 3 to 15 percentage points.
+
+<p align="center">
+  <img src="docs/decaf_runs_n_poses_benchmark.png" alt="Runs N' Poses (post-2023) unconditional cofolding success rate, best@5. DeCAF-Pearl reaches near-parity with its full-budget Pearl teacher and outperforms AF3, Boltz-1x, Chai-1, and Boltz-2." width="90%">
+</p>
+
+<p align="center"><em>Runs N' Poses (post-2023) success rate, best@5: DeCAF-Pearl nearly matches its full-budget teacher while outperforming AF3, Boltz-1x, Chai-1, and Boltz-2.</em></p>
 
 ### Key design decisions
 
@@ -25,6 +36,27 @@ DeCAF-Pearl distills the [Pearl](https://arxiv.org/abs/2510.24670) cofolding fou
 
 - **High-throughput virtual screening.** Cofold 5x more molecules against a target at the same compute budget.
 - **Scalable synthetic data generation.** Generate 5x more high-quality protein-ligand complexes to train better downstream models, without losing the structural signal they depend on.
+
+## Model checkpoint
+
+The DeCAF-Pearl checkpoint is available on [Hugging Face: gianscarpe/decaf](https://huggingface.co/gianscarpe/decaf).
+
+DeCAF extends [Boltz](https://github.com/jwohlwend/boltz), so it runs in a standard Boltz environment — you can reuse an existing `boltz` conda env (the dependencies are the same). The example script prepends this repo's `src/` to `PYTHONPATH`, so the bundled DeCAF code is used even if another `boltz` package is already installed in that env.
+
+Download the checkpoint and run the bundled end-to-end example:
+
+```bash
+# (optional) activate your existing Boltz environment
+conda activate boltz
+
+# download the checkpoint (requires `pip install huggingface_hub`)
+hf download gianscarpe/decaf decaf_ckpt.ckpt --local-dir .
+
+# run few-step DeCAF cofolding inference (protein dimer + SAH ligand, MSA via ColabFold)
+bash scripts/run_decaf_example.sh ./decaf_ckpt.ckpt
+```
+
+This fetches an MSA from the public ColabFold server, runs few-step DecafSampler inference on `examples/protlig_msa_server.yaml` (a homodimer + SAH ligand), and writes 5 predicted structure CIFs. On this example DeCAF reaches ~0.3 Å ligand RMSD against the crystal structure in just 10 steps. See [docs/decaf_prediction.md](docs/decaf_prediction.md) for full prediction and evaluation instructions.
 
 ## Citation
 
