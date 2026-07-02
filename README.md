@@ -1,6 +1,6 @@
 # DeCAF: Denoiser Cofolding All-atom Flowmap Model
 
-**Distilling Pearl: Flow Maps for Fast All-Atom Cofolding**
+**Distilling Boltz: Flow Maps for Fast All-Atom Cofolding**
 
 [[arXiv]](https://arxiv.org/abs/2606.08375)
 [[Blog Post]](https://www.genesis.ml/news/genesis-model-distillation)
@@ -14,13 +14,13 @@
 
 DeCAF is the first flow map model for all-atom cofolding. Instead of taking many steps along the denoising trajectory, a flow map learns to jump directly from one point on the trajectory to another, potentially traversing the entire generation process in just a handful of steps.
 
-DeCAF-Pearl distills the [Pearl](https://arxiv.org/abs/2510.24670) cofolding foundation model into a fast few-step generator, achieving a **5x inference speedup** with near-parity in structure prediction quality. Using over 5x fewer compute steps, DeCAF-Pearl exceeds AlphaFold 3, Chai-1, Boltz-1x, and Boltz-2 on the Runs N' Poses benchmark success rate by 3 to 15 percentage points.
+DeCAF-Boltz distills the [Boltz-1](https://github.com/jwohlwend/boltz) cofolding model into a fast few-step generator, achieving a **5x inference speedup** with near-parity in structure prediction quality. Using over 5x fewer compute steps, DeCAF-Boltz exceeds AlphaFold 3, Chai-1, Boltz-1x, and Boltz-2 on the Runs N' Poses benchmark success rate by 3 to 15 percentage points.
 
 <p align="center">
-  <img src="docs/decaf_runs_n_poses_benchmark.png" alt="Runs N' Poses (post-2023) unconditional cofolding success rate, best@5. DeCAF-Pearl reaches near-parity with its full-budget Pearl teacher and outperforms AF3, Boltz-1x, Chai-1, and Boltz-2." width="90%">
+  <img src="docs/decaf_runs_n_poses_benchmark.png" alt="Runs N' Poses (post-2023) unconditional cofolding success rate, best@5. DeCAF-Boltz reaches near-parity with its full-budget Boltz-1 teacher and outperforms AF3, Boltz-1x, Chai-1, and Boltz-2." width="90%">
 </p>
 
-<p align="center"><em>Runs N' Poses (post-2023) success rate, best@5: DeCAF-Pearl nearly matches its full-budget teacher while outperforming AF3, Boltz-1x, Chai-1, and Boltz-2.</em></p>
+<p align="center"><em>Runs N' Poses (post-2023) success rate, best@5: DeCAF-Boltz nearly matches its full-budget teacher while outperforming AF3, Boltz-1x, Chai-1, and Boltz-2.</em></p>
 
 ### Key design decisions
 
@@ -37,7 +37,7 @@ DeCAF-Pearl distills the [Pearl](https://arxiv.org/abs/2510.24670) cofolding fou
 
 ## Model checkpoint
 
-The DeCAF-Pearl checkpoint is available on [Hugging Face: genesisml/decaf](https://huggingface.co/genesisml/decaf).
+The DeCAF-Boltz checkpoint is available on [Hugging Face: genesisml/decaf](https://huggingface.co/genesisml/decaf).
 
 DeCAF extends [Boltz](https://github.com/jwohlwend/boltz), so it runs in a standard Boltz environment — you can reuse an existing `boltz` conda env (the dependencies are the same). The example script prepends this repo's `src/` to `PYTHONPATH`, so the bundled DeCAF code is used even if another `boltz` package is already installed in that env.
 
