@@ -37,24 +37,32 @@ from boltz.model.models.boltz2 import Boltz2
 CCD_URL = "https://huggingface.co/boltz-community/boltz-1/resolve/main/ccd.pkl"
 
 
-def _detect_decaf_checkpoint(checkpoint_path: str | Path) -> Optional[dict]:
+def _detect_decaf_checkpoint(
+    checkpoint_path: str | Path,
+) -> tuple[Optional[dict], bool]:
     """Peek into a checkpoint to detect Decaf and extract decaf_args.
 
-    Returns decaf_args dict if the checkpoint is a Decaf model,
-    or None for a standard diffusion checkpoint.
+    Returns a ``(decaf_args, has_confidence)`` tuple:
+      * ``decaf_args`` is a dict if the checkpoint is a Decaf model, else ``None``.
+      * ``has_confidence`` is True if the checkpoint also carries confidence-module
+        weights (e.g. a Decaf head fused with a Boltz-1 confidence module), in which
+        case confidence outputs can be emitted alongside the Decaf structure.
     """
     ckpt = torch.load(str(checkpoint_path), map_location="cpu", weights_only=False)
     hp = ckpt.get("hyper_parameters", {})
+    state_dict = ckpt.get("state_dict", {})
+
+    has_confidence = any(k.startswith("confidence_module.") for k in state_dict)
 
     is_decaf = (
         hp.get("diffusion_type") == "decaf"
-        or any(k.startswith("decaf_head.") for k in ckpt.get("state_dict", {}))
+        or any(k.startswith("decaf_head.") for k in state_dict)
     )
     if not is_decaf:
-        return None
+        return None, has_confidence
 
     dpa = hp.get("diffusion_process_args", {})
-    return {
+    decaf_args = {
         "sigma_min": dpa.get("sigma_min", 0.0004),
         "sigma_max": dpa.get("sigma_max", 160.0),
         "sigma_data": dpa.get("sigma_data", 16.0),
@@ -63,6 +71,7 @@ def _detect_decaf_checkpoint(checkpoint_path: str | Path) -> Optional[dict]:
         "target_type": hp.get("decaf_target_type", "teacher"),
         "diagonal_portion": dpa.get("diagonal_portion", 0.5),
     }
+    return decaf_args, has_confidence
 MOL_URL = "https://huggingface.co/boltz-community/boltz-2/resolve/main/mols.tar"
 
 BOLTZ1_URL_WITH_FALLBACK = [
@@ -1443,20 +1452,28 @@ def predict(  # noqa: C901, PLR0915, PLR0912
                 checkpoint = cache / "boltz1_conf.ckpt"
 
         # Detect Decaf checkpoint
-        decaf_args = _detect_decaf_checkpoint(checkpoint)
+        decaf_args, has_confidence = _detect_decaf_checkpoint(checkpoint)
         is_decaf = decaf_args is not None
         if is_decaf:
             click.echo("Detected Decaf checkpoint — using DecafSampler for inference.")
             click.echo(f"  decaf_args: {decaf_args}")
+            if has_confidence:
+                click.echo(
+                    "  Confidence module present — emitting pLDDT/PAE/PDE confidence outputs."
+                )
 
+        # A plain Decaf checkpoint has no confidence head, so confidence outputs are
+        # suppressed. A Decaf checkpoint fused with a confidence module (has_confidence)
+        # can score its own samples, so re-enable the confidence outputs in that case.
+        confidence_ok = (not is_decaf) or has_confidence
         predict_args = {
             "recycling_steps": recycling_steps,
             "sampling_steps": sampling_steps,
             "diffusion_samples": diffusion_samples,
             "max_parallel_samples": max_parallel_samples,
-            "write_confidence_summary": not is_decaf,
-            "write_full_pae": write_full_pae if not is_decaf else False,
-            "write_full_pde": write_full_pde if not is_decaf else False,
+            "write_confidence_summary": confidence_ok,
+            "write_full_pae": write_full_pae if confidence_ok else False,
+            "write_full_pde": write_full_pde if confidence_ok else False,
         }
 
         steering_args = BoltzSteeringParams()
