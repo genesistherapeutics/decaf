@@ -487,16 +487,26 @@ class Boltz1(LightningModule):
                 )
 
         if self.confidence_prediction:
+            # The Decaf sampler does not accumulate a per-token diffusion
+            # representation (diff_token_repr is None), unlike AtomDiffusion. The
+            # confidence module consumes s_diffusion additively as
+            # `s = s + s_diffusion_to_s(s_diffusion)`, so a zeroed s_diffusion
+            # contributes exactly nothing and leaves the trunk/coordinate inputs to
+            # drive the prediction. This is an approximation (a Decaf-native token
+            # representation would be preferable) but keeps the confidence head usable.
+            s_diffusion = None
+            if self.confidence_module.use_s_diffusion:
+                s_diffusion = dict_out.get("diff_token_repr")
+                if s_diffusion is None:
+                    s_diffusion = s.new_zeros(
+                        (diffusion_samples, s.shape[-2], 2 * s.shape[-1])
+                    )
             dict_out.update(
                 self.confidence_module(
                     s_inputs=s_inputs.detach(),
                     s=s.detach(),
                     z=z.detach(),
-                    s_diffusion=(
-                        dict_out["diff_token_repr"]
-                        if self.confidence_module.use_s_diffusion
-                        else None
-                    ),
+                    s_diffusion=s_diffusion,
                     x_pred=dict_out["sample_atom_coords"].detach(),
                     feats=feats,
                     pred_distogram_logits=dict_out["pdistogram"].detach(),
