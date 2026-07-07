@@ -77,3 +77,11 @@ The research team at Genesis is grateful to our collaborators from Massachusetts
 ## License
 
 See [LICENSE](LICENSE) for details.
+
+---
+
+<p align="center">
+  <a href="https://www.genesis.ml/careers">
+    <img src="docs/genesis-hiring-banner.png" alt="Genesis Molecular AI is hiring — build the frontier AI for drug discovery. Explore open roles at genesis.ml/careers" width="100%">
+  </a>
+</p>
