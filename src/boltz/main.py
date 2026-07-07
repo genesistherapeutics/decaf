@@ -1043,6 +1043,13 @@ def cli() -> None:
     help="Override FK resampling interval (default: 3). Set to 1 for every-step resampling.",
 )
 @click.option(
+    "--num_gd_steps",
+    default=1,
+    type=int,
+    help="Number of per-step gradient-guidance updates on x0 (requires --use_potentials). "
+    "Default is 1; the paper uses 20.",
+)
+@click.option(
     "--no_sde",
     is_flag=True,
     help="Use ODE (deterministic Euler) instead of SDE for Decaf sampling.",
@@ -1201,6 +1208,7 @@ def predict(  # noqa: C901, PLR0915, PLR0912
     use_potentials: bool = False,
     num_particles: Optional[int] = None,
     fk_resampling_interval: Optional[int] = None,
+    num_gd_steps: int = 1,
     no_sde: bool = False,
     sde_gamma: float = 1.0,
     use_mc_grad: bool = False,
@@ -1516,6 +1524,7 @@ def predict(  # noqa: C901, PLR0915, PLR0912
                 sde_gamma=sde_gamma,
                 fk_steering=use_potentials,
                 physical_guidance_update=use_potentials,
+                num_gd_steps=num_gd_steps,
             )
             logging.getLogger(__name__).info("ODE sampler enabled (no_sde=True)")
 
@@ -1530,6 +1539,7 @@ def predict(  # noqa: C901, PLR0915, PLR0912
                 num_mc_grad_particles=mc_grad_particles,
                 snr_ratio=mc_grad_snr_ratio,
                 mc_grad_use_gd_guidance=not no_mc_grad_gd,
+                num_gd_steps=num_gd_steps,
             )
             logging.getLogger(__name__).info(
                 "MCGrad sampler enabled: K=%d, snr_ratio=%.1f",
@@ -1548,6 +1558,7 @@ def predict(  # noqa: C901, PLR0915, PLR0912
                 num_simulations=mcts_simulations,
                 expansion_children=mcts_children,
                 num_roots=num_roots,
+                num_gd_steps=num_gd_steps,
             )
             logging.getLogger(__name__).info(
                 "MCTS Full Rollout sampler enabled: simulations=%d, children=%d, roots=%d",
@@ -1558,13 +1569,14 @@ def predict(  # noqa: C901, PLR0915, PLR0912
         # create a basic DecafSamplerConfig so the settings take effect.
         if is_decaf and hasattr(model_module, "decaf_head") and model_module.decaf_head is not None:
             if not hasattr(model_module, "sampler_config") or model_module.sampler_config is None:
-                if sde_gamma != 1.0 or use_potentials:
+                if sde_gamma != 1.0 or use_potentials or num_gd_steps != 1:
                     from boltz.model.modules.decaf_sampler import DecafSamplerConfig
                     model_module.sampler_config = DecafSamplerConfig(
                         use_sde=True,
                         sde_gamma=sde_gamma,
                         fk_steering=use_potentials,
                         physical_guidance_update=use_potentials,
+                        num_gd_steps=num_gd_steps,
                     )
                     logging.getLogger(__name__).info(
                         "Gamma/FK sampler config: gamma=%.2f, fk=%s", sde_gamma, use_potentials
